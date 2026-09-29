@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07111f">
+  <title>KMK Sportsbook — Rivalry Week</title>
+  <style>
+    :root{--bg:#07111f;--panel:#0d1828;--panel2:#111f33;--text:#f5f7fb;--muted:#93a4bb;--border:#22334b;--accent:#67e8f9;--up:#34d399;--down:#fb7185}
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    body{min-height:100vh}.wrap{max-width:980px;margin:0 auto;padding:24px 16px 48px}
+    .top{display:flex;gap:18px;align-items:flex-end;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap}
+    .eyebrow{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:800}
+    h1{margin:6px 0;font-size:clamp(28px,5vw,44px);line-height:1.05}.sub{color:var(--muted);font-size:14px}
+    .status{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px}.dot{width:9px;height:9px;border-radius:50%;background:var(--up);box-shadow:0 0 18px rgba(52,211,153,.65)}
+    .hero{background:linear-gradient(180deg,rgba(103,232,249,.08),rgba(103,232,249,0));border:1px solid var(--border);border-radius:18px;padding:16px 18px;margin-bottom:18px}
+    .hero strong{color:var(--accent)}.board{border:1px solid var(--border);border-radius:18px;overflow:hidden;background:var(--panel)}
+    .head,.row{display:grid;grid-template-columns:minmax(0,1fr) 110px 110px 90px;align-items:center}
+    .head{padding:13px 16px;background:#0a1524;color:var(--muted);font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--border)}
+    .game{border-bottom:1px solid var(--border)}.game:last-child{border-bottom:0}.game-title{padding:15px 16px 7px;font-size:18px;font-weight:800}
+    .vs{color:var(--muted);font-weight:500}.row{padding:10px 16px}.row:last-child{padding-bottom:16px}.market-name{font-weight:750}
+    .market-note{font-size:12px;color:var(--muted);margin-top:2px}.num{text-align:center;font-variant-numeric:tabular-nums}.open{color:var(--muted)}
+    .current{font-size:19px;font-weight:900}.move{text-align:center;font-size:13px;font-weight:800}.flat{color:var(--muted)}.up{color:var(--up)}.down{color:var(--down)}
+    .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}.card{border:1px solid var(--border);border-radius:14px;background:var(--panel2);padding:14px}
+    .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:800}.big{font-size:24px;font-weight:900;margin-top:4px}
+    .fine,.stamp{font-size:12px;color:var(--muted);line-height:1.6}.stamp{margin-top:16px}
+    @media(max-width:640px){.wrap{padding:18px 10px 36px}.head,.row{grid-template-columns:minmax(0,1fr) 72px 76px 58px;padding-left:10px;padding-right:10px}.head{font-size:9px}.game-title{padding-left:10px;padding-right:10px}.current{font-size:16px}.summary{grid-template-columns:1fr}.hero{padding:14px}}
+  </style>
+</head>
+<body>
+<main class="wrap">
+  <section class="top">
+    <div><div class="eyebrow">KMK Sportsbook • Rivalry Week</div><h1>Rivalry Week Betting Board</h1><div class="sub">$1 FAAB = 1 point of line movement</div></div>
+    <div class="status"><span class="dot"></span> Markets open</div>
+  </section>
+  <section class="hero">Individual wagers are <strong>anonymous</strong>. The board only shows where the market has moved.</section>
+  <section class="board">
+    <div class="head"><div>Matchup / Market</div><div class="num">Open</div><div class="num">Current</div><div class="num">Move</div></div>
+    <div id="games"></div>
+  </section>
+  <section class="summary">
+    <div class="card"><div class="label">Games</div><div class="big" id="gameCount">6</div></div>
+    <div class="card"><div class="label">Total FAAB Wagered</div><div class="big" id="volume">$0</div></div>
+    <div class="card"><div class="label">Markets Moved</div><div class="big" id="moved">0</div></div>
+  </section>
+  <div class="stamp" id="stamp">Opening board</div>
+  <div class="fine">Spread movement: bets on the favorite make the favorite more negative; bets on the underdog move the spread toward the underdog. Total bets move the O/U up or down by the FAAB amount wagered.</div>
+</main>
+<script>
+const board={
+  totalFaabWagered:0,
+  lastUpdated:"Opening board",
+  games:[
+    {a:"David",b:"Kumar",openingSpread:-19.5,currentSpread:-19.5,openingTotal:233.5,currentTotal:233.5},
+    {a:"Carter",b:"Conner",openingSpread:-13.5,currentSpread:-13.5,openingTotal:194.5,currentTotal:194.5},
+    {a:"Christian",b:"Anshul",openingSpread:-22.5,currentSpread:-22.5,openingTotal:229.5,currentTotal:229.5},
+    {a:"Nick K",b:"Ty",openingSpread:-3.5,currentSpread:-3.5,openingTotal:180.5,currentTotal:180.5},
+    {a:"Nick C",b:"Mason",openingSpread:-13.5,currentSpread:-13.5,openingTotal:209.5,currentTotal:209.5},
+    {a:"Ben",b:"Tommy",openingSpread:-5.5,currentSpread:-5.5,openingTotal:223.5,currentTotal:223.5}
+  ]
+};
+function spread(n){return (n>0?"+":"")+n.toFixed(1)}
+function move(open,current){
+  var d=current-open;
+  if(Math.abs(d)<.0001)return '<span class="move flat">—</span>';
+  return '<span class="move '+(d>0?'up':'down')+'">'+(d>0?'▲':'▼')+' '+Math.abs(d).toFixed(1)+'</span>';
+}
+var games=document.getElementById("games"),moved=0;
+board.games.forEach(function(g){
+  if(Math.abs(g.currentSpread-g.openingSpread)>.0001)moved++;
+  if(Math.abs(g.currentTotal-g.openingTotal)>.0001)moved++;
+  var el=document.createElement("div");el.className="game";
+  el.innerHTML=
+    '<div class="game-title">'+g.a+' <span class="vs">vs.</span> '+g.b+'</div>'+
+    '<div class="row"><div><div class="market-name">Spread</div><div class="market-note">'+g.a+'</div></div><div class="num open">'+spread(g.openingSpread)+'</div><div class="num current">'+spread(g.currentSpread)+'</div><div class="num">'+move(g.openingSpread,g.currentSpread)+'</div></div>'+
+    '<div class="row"><div><div class="market-name">Total</div><div class="market-note">O/U</div></div><div class="num open">'+g.openingTotal.toFixed(1)+'</div><div class="num current">'+g.currentTotal.toFixed(1)+'</div><div class="num">'+move(g.openingTotal,g.currentTotal)+'</div></div>';
+  games.appendChild(el);
+});
+document.getElementById("gameCount").textContent=board.games.length;
+document.getElementById("volume").textContent="$"+board.totalFaabWagered;
+document.getElementById("moved").textContent=moved;
+document.getElementById("stamp").textContent=board.lastUpdated;
+</script>
+</body>
+</html>
