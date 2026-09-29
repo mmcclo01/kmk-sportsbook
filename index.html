@@ -3,13 +3,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#07111f">\n  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">\n  <meta http-equiv="Pragma" content="no-cache">\n  <meta http-equiv="Expires" content="0">
+  <meta name="theme-color" content="#07111f">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>KMK Sportsbook — Rivalry Week</title>
   <style>
     :root{
       --bg:#07111f;--panel:#0d1828;--panel2:#111f33;--text:#f5f7fb;--muted:#93a4bb;
       --border:#22334b;--accent:#67e8f9;--up:#34d399;--down:#fb7185;
-      --fav-bg:rgba(251,191,36,.14);--fav-text:#fcd34d;--dog-bg:rgba(103,232,249,.14);--dog-text:#67e8f9;
+      --gold:#fcd34d;--gold-bg:rgba(252,211,77,.10);--gold-border:rgba(252,211,77,.52);
+      --dog:#9fb3c9;--dog-bg:rgba(148,163,184,.07);
     }
     *{box-sizing:border-box}
     html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
@@ -23,25 +27,32 @@
     .dot{width:9px;height:9px;border-radius:50%;background:var(--up);box-shadow:0 0 18px rgba(52,211,153,.65)}
     .hero{background:linear-gradient(180deg,rgba(103,232,249,.08),rgba(103,232,249,0));border:1px solid var(--border);border-radius:18px;padding:16px 18px;margin-bottom:18px;line-height:1.55}
     .hero strong{color:var(--accent)}
-    .board{border:1px solid var(--border);border-radius:18px;overflow:hidden;background:var(--panel)}
-    .head,.row{display:grid;grid-template-columns:minmax(0,1.3fr) 110px 110px 90px;align-items:center}
-    .head{padding:13px 16px;background:#0a1524;color:var(--muted);font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--border)}
-    .game{border-bottom:1px solid var(--border)}
-    .game:last-child{border-bottom:0}
-    .game-title{padding:15px 16px 7px;font-size:18px;font-weight:800}
-    .vs{color:var(--muted);font-weight:500}
-    .badges{display:flex;gap:8px;flex-wrap:wrap;padding:0 16px 10px}
-    .badge{font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:5px 9px}
-    .fav{background:var(--fav-bg);color:var(--fav-text)}
-    .dog{background:var(--dog-bg);color:var(--dog-text)}
-    .row{padding:10px 16px}
-    .row:last-child{padding-bottom:16px}
-    .market-name{font-weight:800}
+    .board{display:grid;gap:14px}
+    .game{border:1px solid var(--border);border-radius:18px;overflow:hidden;background:var(--panel)}
+    .game-head{padding:13px 16px;background:#0a1524;border-bottom:1px solid var(--border);font-size:13px;color:var(--muted);font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+    .sides{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px 16px}
+    .side{border:1px solid var(--border);border-radius:14px;padding:13px 14px}
+    .side.favorite{background:var(--gold-bg);border-color:var(--gold-border);box-shadow:inset 4px 0 0 var(--gold)}
+    .side.underdog{background:var(--dog-bg)}
+    .side-label{font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:900;margin-bottom:5px}
+    .favorite .side-label{color:var(--gold)}
+    .underdog .side-label{color:var(--dog)}
+    .side-main{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+    .side-name{font-size:21px;font-weight:950}
+    .favorite .side-name{color:var(--gold)}
+    .side-line{font-size:25px;font-weight:950;font-variant-numeric:tabular-nums;white-space:nowrap}
+    .favorite .side-line{color:var(--gold)}
+    .side-sub{font-size:11px;color:var(--muted);margin-top:4px}
+    .markets{border-top:1px solid var(--border)}
+    .market-row{display:grid;grid-template-columns:minmax(0,1.3fr) 120px 120px 90px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border)}
+    .market-row:last-child{border-bottom:0}
+    .market-name{font-weight:850}
     .market-note{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.45}
-    .num{text-align:center;font-variant-numeric:tabular-nums}
+    .col{text-align:center;font-variant-numeric:tabular-nums}
+    .col-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;font-weight:800}
     .open{color:var(--muted)}
-    .current{font-size:19px;font-weight:900}
-    .move{text-align:center;font-size:13px;font-weight:800}
+    .current{font-size:18px;font-weight:900}
+    .move{font-size:13px;font-weight:850}
     .flat{color:var(--muted)} .up{color:var(--up)} .down{color:var(--down)}
     .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
     .card{border:1px solid var(--border);border-radius:14px;background:var(--panel2);padding:14px}
@@ -51,12 +62,16 @@
     .stamp{margin-top:16px}
     @media(max-width:700px){
       .wrap{padding:18px 10px 36px}
-      .head,.row{grid-template-columns:minmax(0,1.25fr) 72px 76px 58px;padding-left:10px;padding-right:10px}
-      .head{font-size:9px}
-      .game-title,.badges{padding-left:10px;padding-right:10px}
+      .sides{grid-template-columns:1fr;gap:8px;padding:10px}
+      .game-head{padding:11px 10px}
+      .side-main{align-items:center}
+      .side-name{font-size:20px}
+      .side-line{font-size:24px}
+      .market-row{grid-template-columns:minmax(0,1.15fr) 68px 72px 54px;padding:11px 10px}
       .current{font-size:16px}
       .summary{grid-template-columns:1fr}
       .hero{padding:14px}
+      .market-note{font-size:11px}
     }
   </style>
 </head>
@@ -72,19 +87,10 @@
   </section>
 
   <section class="hero">
-    Individual wagers are <strong>anonymous</strong>. The board only shows where the market has moved.<br>
-    <strong>Important:</strong> the <strong>spread is person-specific</strong> (favorite vs underdog), while the <strong>total applies to the full matchup</strong>.
+    <strong>⭐ Gold = favorite.</strong> The other side is the underdog. Spreads are person-specific; totals are for the combined score of the entire matchup. Wagers remain anonymous.
   </section>
 
-  <section class="board">
-    <div class="head">
-      <div>Matchup / Market</div>
-      <div class="num">Open</div>
-      <div class="num">Current</div>
-      <div class="num">Move</div>
-    </div>
-    <div id="games"></div>
-  </section>
+  <section class="board" id="games"></section>
 
   <section class="summary">
     <div class="card"><div class="label">Games</div><div class="big" id="gameCount">6</div></div>
@@ -93,7 +99,7 @@
   </section>
 
   <div class="stamp" id="stamp">Opening board</div>
-  <div class="fine">Spread example: if David is -19.5, David is the favorite and Kumar is the underdog at +19.5. Total example: 233.5 refers to the combined projected score for the entire matchup.</div>
+  <div class="fine">Example: David -19.5 means David is favored by 19.5 and Kumar is +19.5. A total of 233.5 is the combined score of both teams.</div>
 </main>
 
 <script>
@@ -110,58 +116,82 @@ const board = {
   ]
 };
 
-function fmtSigned(n){ return (n > 0 ? "+" : "") + n.toFixed(1); }
-function move(open, current){
+function signed(n){ return (n > 0 ? "+" : "") + n.toFixed(1); }
+function movement(open, current){
   const d = current - open;
-  if (Math.abs(d) < 0.0001) return '<span class="move flat">—</span>';
+  if (Math.abs(d) < .0001) return '<span class="move flat">—</span>';
   return '<span class="move ' + (d > 0 ? 'up' : 'down') + '">' + (d > 0 ? '▲' : '▼') + ' ' + Math.abs(d).toFixed(1) + '</span>';
 }
-function spreadDetails(spread){
-  if (spread <= 0){
-    return { favoriteSide: fmtSigned(spread), underdogSide: "+" + Math.abs(spread).toFixed(1) };
-  } else {
-    return { favoriteSide: "-" + Math.abs(spread).toFixed(1), underdogSide: fmtSigned(spread) };
+function sideInfo(g, spread){
+  if (spread <= 0) {
+    return {
+      favorite:g.a, underdog:g.b,
+      favoriteLine:signed(spread),
+      underdogLine:"+" + Math.abs(spread).toFixed(1)
+    };
   }
+  return {
+    favorite:g.b, underdog:g.a,
+    favoriteLine:"-" + Math.abs(spread).toFixed(1),
+    underdogLine:signed(spread)
+  };
 }
 
 const gamesEl = document.getElementById("games");
 let moved = 0;
 
 board.games.forEach(g => {
-  if (Math.abs(g.currentSpread - g.openingSpread) > 0.0001) moved++;
-  if (Math.abs(g.currentTotal - g.openingTotal) > 0.0001) moved++;
+  if (Math.abs(g.currentSpread - g.openingSpread) > .0001) moved++;
+  if (Math.abs(g.currentTotal - g.openingTotal) > .0001) moved++;
 
-  const openSpread = spreadDetails(g.openingSpread);
-  const currentSpread = spreadDetails(g.currentSpread);
+  const open = sideInfo(g, g.openingSpread);
+  const cur = sideInfo(g, g.currentSpread);
 
-  const block = document.createElement("div");
+  const block = document.createElement("article");
   block.className = "game";
   block.innerHTML = `
-    <div class="game-title">${g.a} <span class="vs">vs.</span> ${g.b}</div>
-    <div class="badges">
-      <span class="badge fav">Favorite: ${g.a}</span>
-      <span class="badge dog">Underdog: ${g.b}</span>
-    </div>
-    <div class="row">
-      <div>
-        <div class="market-name">Spread</div>
-        <div class="market-note">
-          Favorite: ${g.a} ${openSpread.favoriteSide} open / ${currentSpread.favoriteSide} current<br>
-          Underdog: ${g.b} ${openSpread.underdogSide} open / ${currentSpread.underdogSide} current
+    <div class="game-head">${g.a} vs. ${g.b}</div>
+
+    <div class="sides">
+      <div class="side favorite">
+        <div class="side-label">⭐ Favorite</div>
+        <div class="side-main">
+          <div class="side-name">${cur.favorite}</div>
+          <div class="side-line">${cur.favoriteLine}</div>
         </div>
+        <div class="side-sub">Current spread</div>
       </div>
-      <div class="num open">${openSpread.favoriteSide}</div>
-      <div class="num current">${currentSpread.favoriteSide}</div>
-      <div class="num">${move(g.openingSpread, g.currentSpread)}</div>
+
+      <div class="side underdog">
+        <div class="side-label">Underdog</div>
+        <div class="side-main">
+          <div class="side-name">${cur.underdog}</div>
+          <div class="side-line">${cur.underdogLine}</div>
+        </div>
+        <div class="side-sub">Current spread</div>
+      </div>
     </div>
-    <div class="row">
-      <div>
-        <div class="market-name">Total</div>
-        <div class="market-note">Entire matchup total (combined score of both teams)</div>
+
+    <div class="markets">
+      <div class="market-row">
+        <div>
+          <div class="market-name">Spread</div>
+          <div class="market-note">Opening: ${open.favorite} ${open.favoriteLine} / ${open.underdog} ${open.underdogLine}</div>
+        </div>
+        <div class="col open"><div class="col-label">Open</div>${open.favoriteLine}</div>
+        <div class="col current"><div class="col-label">Current</div>${cur.favoriteLine}</div>
+        <div class="col"><div class="col-label">Move</div>${movement(g.openingSpread,g.currentSpread)}</div>
       </div>
-      <div class="num open">${g.openingTotal.toFixed(1)}</div>
-      <div class="num current">${g.currentTotal.toFixed(1)}</div>
-      <div class="num">${move(g.openingTotal, g.currentTotal)}</div>
+
+      <div class="market-row">
+        <div>
+          <div class="market-name">Game Total</div>
+          <div class="market-note">Combined score — both teams</div>
+        </div>
+        <div class="col open"><div class="col-label">Open</div>${g.openingTotal.toFixed(1)}</div>
+        <div class="col current"><div class="col-label">Current</div>${g.currentTotal.toFixed(1)}</div>
+        <div class="col"><div class="col-label">Move</div>${movement(g.openingTotal,g.currentTotal)}</div>
+      </div>
     </div>
   `;
   gamesEl.appendChild(block);
