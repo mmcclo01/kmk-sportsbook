@@ -152,15 +152,15 @@ board.games.forEach(g => {
   block.innerHTML = `
     <div class="game-head">
       <div class="matchup-title">
-        <span class="fav-title">${cur.favorite} (${cur.favoriteLine})</span>
+        <span class="fav-title">${cur.favorite}</span>
         <span class="title-vs">vs.</span>
-        <span class="dog-title">${cur.underdog} (${cur.underdogLine})</span>
+        <span class="dog-title">${cur.underdog}</span>
       </div>
     </div>
 
     <div class="sides">
       <div class="side favorite">
-        <div class="side-label">⭐ Favorite</div>
+        <div class="side-label">Favorite</div>
         <div class="side-main">
           <div class="side-name">${cur.favorite}</div>
           <div class="side-line">${cur.favoriteLine}</div>
