@@ -29,7 +29,7 @@
     .hero strong{color:var(--accent)}
     .board{display:grid;gap:14px}
     .game{border:1px solid var(--border);border-radius:18px;overflow:hidden;background:var(--panel)}
-    .game-head{padding:15px 16px;background:#0a1524;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.matchup-title{font-size:21px;font-weight:950;letter-spacing:-.01em}.fav-title{color:var(--gold)}.dog-title{color:var(--text)}.title-vs{color:var(--muted);font-weight:700;margin:0 6px}.fav-tag{font-size:10px;font-weight:950;letter-spacing:.12em;text-transform:uppercase;color:#111827;background:var(--gold);border-radius:999px;padding:5px 8px;white-space:nowrap}
+    .game-head{padding:15px 16px;background:#0a1524;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.matchup-title{font-size:21px;font-weight:950;letter-spacing:-.01em}.fav-title{color:var(--gold)}.dog-title{color:var(--text)}.title-vs{color:var(--muted);font-weight:700;margin:0 6px}
     .sides{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px 16px}
     .side{border:1px solid var(--border);border-radius:14px;padding:13px 14px}
     .side.favorite{background:var(--gold-bg);border-color:var(--gold-border);box-shadow:inset 4px 0 0 var(--gold)}
@@ -63,7 +63,7 @@
     @media(max-width:700px){
       .wrap{padding:18px 10px 36px}
       .sides{grid-template-columns:1fr;gap:8px;padding:10px}
-      .game-head{padding:12px 10px}.matchup-title{font-size:18px}.fav-tag{font-size:9px;padding:4px 7px}
+      .game-head{padding:12px 10px}.matchup-title{font-size:18px}
       .side-main{align-items:center}
       .side-name{font-size:20px}
       .side-line{font-size:24px}
@@ -152,11 +152,10 @@ board.games.forEach(g => {
   block.innerHTML = `
     <div class="game-head">
       <div class="matchup-title">
-        <span class="fav-title">★ ${cur.favorite} (${cur.favoriteLine})</span>
+        <span class="fav-title">${cur.favorite} (${cur.favoriteLine})</span>
         <span class="title-vs">vs.</span>
         <span class="dog-title">${cur.underdog} (${cur.underdogLine})</span>
       </div>
-      <div class="fav-tag">Favorite: ${cur.favorite}</div>
     </div>
 
     <div class="sides">
